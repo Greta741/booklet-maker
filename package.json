@@ -16,7 +16,7 @@
     "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-pdf": "^9.2.1",
+    "react-pdf": "^8.0.2",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {

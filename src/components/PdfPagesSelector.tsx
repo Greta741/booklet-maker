@@ -94,7 +94,7 @@ const PdfPagesSelector = ({ file, onPagesChange }: PdfPagesSelectorProps) => {
         selectedPagesArray.push(...tempSelectedPagesArray);
 
         onPagesChange(selectedPagesArray);
-    }, [selectedPages])
+    }, [selectedPages, onPagesChange])
 
     return (
         <StyledDocumentWrapper>
