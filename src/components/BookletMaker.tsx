@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import BookletService from './BookletService'
+import { Button } from '@mui/material';
 
 const generateFileUrl = (bytes: Uint8Array) => {
     const blob = new Blob([bytes], { type: 'application/pdf' });
@@ -11,18 +12,20 @@ const generateFileUrl = (bytes: Uint8Array) => {
 
 interface BookletMakerProps {
     file: File;
+    pagesNumbers: (number | undefined)[];
 };
 
-const BookletMaker: React.FC<BookletMakerProps> = ({ file }) => {
+const BookletMaker: React.FC<BookletMakerProps> = ({ file, pagesNumbers }) => {
     const [bookletUrl, setBookletUrl] = useState<string | undefined>();
 
     const makeBooklet = useCallback(async () => {
-        const bookletBytes = await BookletService.make(file);
+        const pages = BookletService.calculatePages(pagesNumbers);
+        const bookletBytes = await BookletService.make(file, pages);
         if (bookletBytes) {
             const url = generateFileUrl(bookletBytes);
             setBookletUrl(url);
         }
-    }, [file])
+    }, [file, pagesNumbers])
 
     useEffect(() => {
         makeBooklet();
@@ -30,7 +33,10 @@ const BookletMaker: React.FC<BookletMakerProps> = ({ file }) => {
 
 
     return <div>
-        <a href={bookletUrl} download='booklet.pdf'>Download</a>
+        <Button variant="contained" component="label">
+            <a href={bookletUrl} download='booklet.pdf'>Download</a>
+        </Button>
+
     </div>
 };
 
