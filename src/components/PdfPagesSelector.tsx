@@ -5,6 +5,7 @@ import BookletService from "./BookletService";
 import styled from "styled-components";
 
 const StyledDocumentWrapper = styled.div`
+    margin: 20px 0;
     .react-pdf__Document {
         display: flex;
         flex-flow: row;

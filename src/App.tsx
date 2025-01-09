@@ -1,23 +1,23 @@
-"use client";
-
-import styles from "./page.module.css";
-import FileUploader from "@/components/FileUploader";
 import React, { useState } from 'react';
-import BookletMaker from "@/components/BookletMaker";
-import PdfPagesSelector from "@/components/PdfPagesSelector";
+import './App.css';
+import FileUploader from './components/FileUploader';
+import BookletMaker from './components/BookletMaker';
+import PdfPagesSelector from './components/PdfPagesSelector';
 import { pdfjs } from 'react-pdf';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export default function Home() {
+function App() {
   const [file, setFile] = useState<File | undefined>();
   const [selectedPagesNumbers, setSelectedPagesNumbers] = useState<(number | undefined)[]>([]);
 
   return (
-    <div className={styles.page}>
+    <div>
       <FileUploader onFileUpload={setFile} />
-      {!!file && <PdfPagesSelector file={file} onPagesChange={(pages) => setSelectedPagesNumbers(pages)} />}
+      {!!file && <PdfPagesSelector file={file} onPagesChange={setSelectedPagesNumbers} />}
       {!!file && <BookletMaker file={file} pagesNumbers={selectedPagesNumbers} />}
     </div>
   );
 }
+
+export default App;

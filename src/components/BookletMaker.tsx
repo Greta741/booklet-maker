@@ -1,8 +1,19 @@
-"use client";
-
 import React, { useCallback, useEffect, useState } from 'react';
 import BookletService from './BookletService'
 import { Button } from '@mui/material';
+import styled from 'styled-components';
+
+const StyledWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 50px;
+
+    a {
+        color: white;
+    }
+`;
+
 
 const generateFileUrl = (bytes: Uint8Array) => {
     const blob = new Blob([bytes], { type: 'application/pdf' });
@@ -38,12 +49,11 @@ const BookletMaker: React.FC<BookletMakerProps> = ({ file, pagesNumbers }) => {
     }, [file])
 
 
-    return <div>
+    return <StyledWrapper>
         <Button variant="contained" component="label">
             <a href={bookletUrl} download={name}>Download</a>
         </Button>
-
-    </div>
+    </StyledWrapper>
 };
 
 export default BookletMaker;
