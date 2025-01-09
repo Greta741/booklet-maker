@@ -109,7 +109,7 @@ const PdfPagesSelector = ({ file, onPagesChange }: PdfPagesSelectorProps) => {
                 {Array.from(new Array(totalPages), (el, index) => (
                     <StyledPageWrapper key={`pageWrapper_${index + 1}`} selected={selectedPages[index + 1]} onClick={() => togglePage((index + 1).toString())}>
                         <Page
-                            scale='0.3'
+                            scale={0.3}
                             key={`page_${index + 1}`}
                             pageNumber={index + 1}
                             renderTextLayer={false}

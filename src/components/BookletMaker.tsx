@@ -17,6 +17,7 @@ interface BookletMakerProps {
 
 const BookletMaker: React.FC<BookletMakerProps> = ({ file, pagesNumbers }) => {
     const [bookletUrl, setBookletUrl] = useState<string | undefined>();
+    const [name, setName] = useState(file.name);
 
     const makeBooklet = useCallback(async () => {
         const pages = BookletService.calculatePages(pagesNumbers);
@@ -31,10 +32,15 @@ const BookletMaker: React.FC<BookletMakerProps> = ({ file, pagesNumbers }) => {
         makeBooklet();
     }, [makeBooklet])
 
+    useEffect(() => {
+        const [name, extention] = file.name.split('.');
+        setName(`${name} Booklet.${extention}`);
+    }, [file])
+
 
     return <div>
         <Button variant="contained" component="label">
-            <a href={bookletUrl} download='booklet.pdf'>Download</a>
+            <a href={bookletUrl} download={name}>Download</a>
         </Button>
 
     </div>

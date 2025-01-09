@@ -53,11 +53,6 @@ const make = async (file: File, pages: Page[]) => {
         for (let i = 0; i < pages.length; i++) {
             const pageInfo = pages[i];
 
-            console.log(i, pageInfo)
-
-            const leftPage = pageInfo.left ? pdfDoc.getPage(pageInfo.left - 1) : null;
-            const rightPage = pageInfo.right ? pdfDoc.getPage(pageInfo.right - 1) : null;
-
             // Create a new landscape page
             const newPage = tempBookletDoc.addPage([width * 2, height]);
 
