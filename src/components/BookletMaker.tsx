@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import BookletService from './BookletService'
+import PdfService from './PdfService'
 import { Button } from '@mui/material';
 import styled from 'styled-components';
 
 const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    padding-top: 30px;
     margin-bottom: 50px;
 
     a {
@@ -31,8 +31,8 @@ const BookletMaker: React.FC<BookletMakerProps> = ({ file, pagesNumbers }) => {
     const [name, setName] = useState(file.name);
 
     const makeBooklet = useCallback(async () => {
-        const pages = BookletService.calculatePages(pagesNumbers);
-        const bookletBytes = await BookletService.make(file, pages);
+        const pages = PdfService.calculatePages(pagesNumbers);
+        const bookletBytes = await PdfService.makeBooklet(file, pages);
         if (bookletBytes) {
             const url = generateFileUrl(bookletBytes);
             setBookletUrl(url);

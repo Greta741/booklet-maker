@@ -40,8 +40,36 @@ const calculatePages = (pageNumbers: (number | undefined)[]): Page[] => {
     return [...pagesA, ...pagesB];
 }
 
-const make = async (file: File, pages: Page[]) => {
+const reduceMargins = async (file: File, margin: number) => {
     const arrayBuffer = await file.arrayBuffer();
+
+    // Load the PDF
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+    // Loop through all pages
+    const pages = pdfDoc.getPages();
+    for (const page of pages) {
+        // Get the current MediaBox (the full dimensions of the page)
+        const { x, y, width, height } = page.getMediaBox();
+
+        // Calculate new dimensions after removing margins
+        const newX = x + margin; // Left
+        const newY = y + margin; // Bottom
+        const newWidth = width - 2 * margin; // Shrink horizontally
+        const newHeight = height - 2 * margin; // Shrink vertically
+
+        // Set the new MediaBox
+        page.setMediaBox(newX, newY, newWidth, newHeight);
+    }
+
+    // Serialize the PDF to bytes
+    const modifiedPdfBytes = await pdfDoc.save();
+    return modifiedPdfBytes;
+}
+
+const makeBooklet = async (file: File, pages: Page[]) => {
+    const arrayBuffer = await file.arrayBuffer();
+    // const arrayBuffer = await reduceMargins(file, 50);
 
     try {
         const pdfDoc = await PDFDocument.load(arrayBuffer);
@@ -95,4 +123,4 @@ const getPageNumbers = async (file: File): Promise<number> => {
     return 0;
 }
 
-export default { make, calculatePages, getPageNumbers };
+export default { makeBooklet, calculatePages, getPageNumbers };

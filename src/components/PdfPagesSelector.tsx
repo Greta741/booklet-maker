@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import BookletService from "./BookletService";
+import PdfService from "./PdfService";
 import styled from "styled-components";
 
 const StyledDocumentWrapper = styled.div`
@@ -51,7 +51,7 @@ const PdfPagesSelector = ({ file, onPagesChange }: PdfPagesSelectorProps) => {
     const [selectedPages, setSelectedPages] = useState<{ [pageNumber: string]: boolean }>({});
 
     const getPageNumbers = useCallback(async () => {
-        const total = await BookletService.getPageNumbers(file);
+        const total = await PdfService.getPageNumbers(file);
         setTotalPages(total)
     }, [file]);
 

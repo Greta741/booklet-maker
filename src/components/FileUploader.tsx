@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { Button, Typography, Box } from '@mui/material';
 
 interface FileUploaderProps {
+    fileName?: string;
     onFileUpload?: (file: File) => void;
 };
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
-    const [fileName, setFileName] = useState<string>('');
+const FileUploader: React.FC<FileUploaderProps> = ({ fileName, onFileUpload }) => {
+    const [name, setName] = useState<string>('');
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file && file.type === 'application/pdf') {
-            setFileName(file.name);
+            setName(file.name);
             onFileUpload?.(file); // Invoke the callback if provided
         } else {
             alert('Please upload a valid PDF file.');
@@ -30,7 +31,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload }) => {
                     onChange={handleFileChange}
                 />
             </Button>
-            {fileName && <Typography variant="body2">Selected: {fileName}</Typography>}
+            {(name || fileName) && <Typography variant="body2">Selected: {(name || fileName)}</Typography>}
         </Box>
     );
 };

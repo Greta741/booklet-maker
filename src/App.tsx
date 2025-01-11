@@ -1,22 +1,118 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './App.css';
 import FileUploader from './components/FileUploader';
 import BookletMaker from './components/BookletMaker';
 import PdfPagesSelector from './components/PdfPagesSelector';
 import { pdfjs } from 'react-pdf';
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { Card } from '@mui/material';
+import styled from 'styled-components';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import ArrowForward from '@mui/icons-material/ArrowForward';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
+const StyledContentWrapper = styled.div`
+  max-width: 1200px;
+  margin: 20px 50px;
+`;
+
+const StyledBox = styled(Box)`
+  padding: 20px;
+
+  .MuiStepper-root {
+    margin-bottom: 20px;
+  }
+`;
+
 function App() {
+  const [activeStep, setActiveStep] = React.useState(0);
   const [file, setFile] = useState<File | undefined>();
   const [selectedPagesNumbers, setSelectedPagesNumbers] = useState<(number | undefined)[]>([]);
 
+  const handleNext = useCallback(() => {
+    setActiveStep((current) => current + 1);
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setActiveStep((current) => current - 1);
+  }, []);
+
+  useEffect(() => {
+    if (file) {
+      handleNext();
+    }
+  }, [file])
+
   return (
-    <div>
-      <FileUploader onFileUpload={setFile} />
-      {!!file && <PdfPagesSelector file={file} onPagesChange={setSelectedPagesNumbers} />}
-      {!!file && <BookletMaker file={file} pagesNumbers={selectedPagesNumbers} />}
-    </div>
+    <StyledContentWrapper>
+      <Card variant="outlined">
+        <StyledBox>
+          <Stepper activeStep={activeStep}>
+            <Step>
+              <StepLabel>Upload File</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Select pages</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Download</StepLabel>
+            </Step>
+          </Stepper>
+          {activeStep === 0 &&
+            <div>
+              <FileUploader fileName={file?.name} onFileUpload={setFile} />
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button endIcon=<ArrowForward /> disabled={!file} onClick={handleNext}>Next</Button>
+              </Box>
+            </div>
+          }
+
+          {activeStep === 1 &&
+            <div>
+              {!!file && <PdfPagesSelector file={file} onPagesChange={setSelectedPagesNumbers} />}
+              {!file && 'No file selected'}
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Button
+                  color="inherit"
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                  startIcon=<ArrowBack />
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button endIcon=<ArrowForward /> disabled={!file} onClick={handleNext}>Next</Button>
+              </Box>
+            </div>
+          }
+
+          {activeStep === 2 &&
+            <div>
+              {!!file && <BookletMaker file={file} pagesNumbers={selectedPagesNumbers} />}
+              {!file && 'No file selected'}
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Button
+                  color="inherit"
+                  sx={{ mr: 1 }}
+                  onClick={handleBack}
+                  startIcon=<ArrowBack />
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+              </Box>
+            </div>
+          }
+        </StyledBox>
+      </Card>
+    </StyledContentWrapper>
   );
 }
 
