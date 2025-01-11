@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/booklet-maker/static/css/main.0f1dc45b.css",
-    "main.js": "/booklet-maker/static/js/main.16ee6aa0.js",
+    "main.css": "/booklet-maker/static/css/main.1bd1012d.css",
+    "main.js": "/booklet-maker/static/js/main.f3484b19.js",
     "index.html": "/booklet-maker/index.html",
-    "main.0f1dc45b.css.map": "/booklet-maker/static/css/main.0f1dc45b.css.map",
-    "main.16ee6aa0.js.map": "/booklet-maker/static/js/main.16ee6aa0.js.map"
+    "main.1bd1012d.css.map": "/booklet-maker/static/css/main.1bd1012d.css.map",
+    "main.f3484b19.js.map": "/booklet-maker/static/js/main.f3484b19.js.map"
   },
   "entrypoints": [
-    "static/css/main.0f1dc45b.css",
-    "static/js/main.16ee6aa0.js"
+    "static/css/main.1bd1012d.css",
+    "static/js/main.f3484b19.js"
   ]
 }
