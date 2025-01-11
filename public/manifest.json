@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Booklet maker",
+  "name": "Booklet maker",
   "icons": [
     {
       "src": "favicon.ico",
