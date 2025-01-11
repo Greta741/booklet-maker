@@ -19,7 +19,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 
 const StyledContentWrapper = styled.div`
   max-width: 1200px;
-  margin: 20px 50px;
+  padding: 20px 50px;
+  margin: auto;
 `;
 
 const StyledBox = styled(Box)`
