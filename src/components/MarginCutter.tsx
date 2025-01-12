@@ -94,7 +94,7 @@ const MarginCutter = ({ margin, topMarginModifier, file, onMarginChange, onTopMa
                     type="number"
                     fullWidth
                 />
-                <LoadingButton loading={loading} />
+                <LoadingButton loading={false} />
             </Box>
         </>
     );

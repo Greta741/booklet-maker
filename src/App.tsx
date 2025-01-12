@@ -21,6 +21,10 @@ const StyledContentWrapper = styled.div`
   max-width: 1200px;
   padding: 20px 50px;
   margin: auto;
+
+  @media (max-width: 768px) {
+    padding: 20px 10px;
+  }
 `;
 
 const StyledBox = styled(Box)`
