@@ -40,36 +40,35 @@ const calculatePages = (pageNumbers: (number | undefined)[]): Page[] => {
     return [...pagesA, ...pagesB];
 }
 
-const reduceMargins = async (file: File, margin: number) => {
+const reduceMargins = async (file: File, margin: number, topMarginModifier: number = 0): Promise<File> => {
     const arrayBuffer = await file.arrayBuffer();
 
     // Load the PDF
     const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const newPdfDoc = await PDFDocument.create();
+
+    const tempPage = pdfDoc.getPage(0);
+    const { width, height } = tempPage.getSize();
 
     // Loop through all pages
     const pages = pdfDoc.getPages();
     for (const page of pages) {
-        // Get the current MediaBox (the full dimensions of the page)
-        const { x, y, width, height } = page.getMediaBox();
+        const newPage = newPdfDoc.addPage([width - (margin * 2), height - (margin * 2)]);
 
-        // Calculate new dimensions after removing margins
-        const newX = x + margin; // Left
-        const newY = y + margin; // Bottom
-        const newWidth = width - 2 * margin; // Shrink horizontally
-        const newHeight = height - 2 * margin; // Shrink vertically
+        const embeddedPage = await newPdfDoc.embedPage(page)
 
-        // Set the new MediaBox
-        page.setMediaBox(newX, newY, newWidth, newHeight);
+        newPage.drawPage(embeddedPage, { x: -margin, y: -margin + topMarginModifier });
     }
 
     // Serialize the PDF to bytes
-    const modifiedPdfBytes = await pdfDoc.save();
-    return modifiedPdfBytes;
+    const modifiedPdfBytes = await newPdfDoc.save();
+    const blob = new Blob([modifiedPdfBytes], { type: file.type });
+    return new File([blob], file.name);
 }
+
 
 const makeBooklet = async (file: File, pages: Page[]) => {
     const arrayBuffer = await file.arrayBuffer();
-    // const arrayBuffer = await reduceMargins(file, 50);
 
     try {
         const pdfDoc = await PDFDocument.load(arrayBuffer);
@@ -88,6 +87,7 @@ const makeBooklet = async (file: File, pages: Page[]) => {
             if (!!pageInfo.left) {
                 const [copiedFirstPage] = await tempBookletDoc.copyPages(pdfDoc, [pageInfo.left - 1]);
                 const embededFirstPage = await tempBookletDoc.embedPage(copiedFirstPage)
+
                 newPage.drawPage(embededFirstPage, { x: 0, y: 0 });
             }
 
@@ -98,7 +98,6 @@ const makeBooklet = async (file: File, pages: Page[]) => {
                 newPage.drawPage(embededSecondPage, { x: width, y: 0 });
             }
         }
-
 
         const bookletPdfBytes = await tempBookletDoc.save();
 
@@ -123,4 +122,4 @@ const getPageNumbers = async (file: File): Promise<number> => {
     return 0;
 }
 
-export default { makeBooklet, calculatePages, getPageNumbers };
+export default { makeBooklet, calculatePages, getPageNumbers, reduceMargins };

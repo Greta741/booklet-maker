@@ -9,11 +9,11 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { Card } from '@mui/material';
 import styled from 'styled-components';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
+import MarginCutter from './components/MarginCutter';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -32,8 +32,11 @@ const StyledBox = styled(Box)`
 `;
 
 function App() {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const [margin, setMargin] = useState(0);
+  const [topMarginModifier, setTopMarginModifier] = useState(0);
   const [file, setFile] = useState<File | undefined>();
+  const [adjustedMarginFile, setAdjustedMarginFile] = useState<File | undefined>();
   const [selectedPagesNumbers, setSelectedPagesNumbers] = useState<(number | undefined)[]>([]);
 
   const handleNext = useCallback(() => {
@@ -42,6 +45,11 @@ function App() {
 
   const handleBack = useCallback(() => {
     setActiveStep((current) => current - 1);
+  }, []);
+
+  const handleSetFile = useCallback((file: File) => {
+    setFile(file);
+    setAdjustedMarginFile(file);
   }, []);
 
   useEffect(() => {
@@ -59,6 +67,9 @@ function App() {
               <StepLabel>Upload File</StepLabel>
             </Step>
             <Step>
+              <StepLabel>Reduce margin</StepLabel>
+            </Step>
+            <Step>
               <StepLabel>Select pages</StepLabel>
             </Step>
             <Step>
@@ -67,7 +78,7 @@ function App() {
           </Stepper>
           {activeStep === 0 &&
             <div>
-              <FileUploader fileName={file?.name} onFileUpload={setFile} />
+              <FileUploader fileName={file?.name} onFileUpload={handleSetFile} />
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Box sx={{ flex: '1 1 auto' }} />
                 <Button endIcon=<ArrowForward /> disabled={!file} onClick={handleNext}>Next</Button>
@@ -75,10 +86,18 @@ function App() {
             </div>
           }
 
+
           {activeStep === 1 &&
             <div>
-              {!!file && <PdfPagesSelector file={file} onPagesChange={setSelectedPagesNumbers} />}
+              {!!file && <MarginCutter
+                margin={margin}
+                topMarginModifier={topMarginModifier}
+                file={file}
+                onMarginChange={setMargin}
+                onTopMarginModifierChange={setTopMarginModifier}
+                onFileMarginChange={setAdjustedMarginFile} />}
               {!file && 'No file selected'}
+
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Button
                   color="inherit"
@@ -96,8 +115,27 @@ function App() {
 
           {activeStep === 2 &&
             <div>
-              {!!file && <BookletMaker file={file} pagesNumbers={selectedPagesNumbers} />}
-              {!file && 'No file selected'}
+              {!!adjustedMarginFile && <PdfPagesSelector file={adjustedMarginFile} onPagesChange={setSelectedPagesNumbers} />}
+              {!adjustedMarginFile && 'No file selected'}
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Button
+                  color="inherit"
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                  startIcon=<ArrowBack />
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button endIcon=<ArrowForward /> disabled={!file} onClick={handleNext}>Next</Button>
+              </Box>
+            </div>
+          }
+
+          {activeStep === 3 &&
+            <div>
+              {!!adjustedMarginFile && <BookletMaker file={adjustedMarginFile} pagesNumbers={selectedPagesNumbers} />}
+              {!adjustedMarginFile && 'No file selected'}
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Button
                   color="inherit"
